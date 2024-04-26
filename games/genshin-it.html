@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genshin Impact</title>
+    <link rel="icon" href="asset/images/ikon.ico">
+    <link rel="stylesheet" href="asset/css/ff.css">
+</head>
+<body>
+    <header class="navbar" id="navbar">
+        <a href="../index.html" class="title">iTopUp Game</a>
+        <input type="search" class="input-search" placeholder="Cari Game Kamu">
+        <button type="submit" class="input-submit">CARI</button>
+        <nav>
+            <ul>
+                <li><a href="../index.html">BERANDA</a></li>
+                <li><a href="#">PRODUK</a></li>
+                <li><a href="#">KALKULATOR</a></li>
+                <li><a href="#">KONTAK</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hohop">
+        <div class="list-isi">
+            <div class="ror">Pilih Nominal TopUp</div>
+            <div class="rors">TopUp Genshin Impact</div>
+            <div class="item" id="item">
+            </div>
+        </div>
+    </section>
+
+    <section class="data">
+        <div class="form-data">
+            <div class="ror">Lengkapi Data</div>
+        </div>
+        <div class="search">
+            <input class="form-search" type="text" placeholder="MASUKAN USER ID">
+        </div>
+    </section>
+
+    <section class="payment">
+        <div class="form-payment">
+            <div class="ror">Pilih Metode Pembayaran</div>
+        </div>
+    </section>
+
+    <div class="logo-img">
+        <img src="asset/images/GenshinImpact.jpg" alt="">
+    </div>
+
+    <!--=============== MAIN JS ===============-->
+      <!-- FIREBASE WAJIB -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    
+    <!-- FIREBASE PILIHAN -->
+      <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+      <script src="asset/script/firebase-config.js"></script>
+      <script src="asset/script/ff.js"></script>
+</body>
+</html>

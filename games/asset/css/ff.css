@@ -1,0 +1,229 @@
+:root
+{
+    --blue : #141414;
+    --dark-blue : #1b1b1b;
+    --green : #00EB09;
+    --white : #fff;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: 0;
+    list-style-type: none;
+    box-sizing: border-box;
+    font-family: 'Tahoma';
+}
+
+body {
+    background-color: var(--dark-blue);
+    color: var(--white)
+}
+
+header {
+    box-shadow: 0px 0px 112px 0px rgba(255,255,255,0.75);
+    -webkit-box-shadow: 0px 0px 112px 0px rgba(255,255,255,0.75);
+    -moz-box-shadow: 0px 0px 112px 0px rgba(255,255,255,0.75);
+    position: absolute;
+    width: 100%;
+    top: 0;
+    padding:  2%;
+    font-weight: bold;
+    font-size: 15pt;
+    text-align: center;
+    background-color: var(--blue);
+}
+
+.title {
+    color: var(--green);
+    border-bottom: 1px solid var(--white);
+    font-size: 15pt;
+}
+
+.input-search {
+    width: 30%;
+    border: 0;
+    border-radius: 0 0 0 15px;
+    padding: 2px;
+}
+
+.input-submit {
+    margin-left: -5px;
+    border: 0;
+    border-radius: 0 10px 0 0;
+    padding: 2px;
+    background-color: var(--green);
+    color: var(--blue);
+    width: 5%;
+    font-weight: bold;
+}
+
+nav {
+    margin-top: 15px;
+}
+
+nav ul {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+nav ul li a {
+    color: var(--green);
+}
+
+nav ul li a:hover {
+    border-bottom: 3px solid var(--white);
+
+}
+
+.list-isi {
+    margin-right: 250px;
+    margin-left: 250px;
+    height: 1000px;
+    width: 300px;
+}
+
+.hohop {
+    margin-top: 100px;
+    background-color: #333333;
+    position: absolute;
+    top: 350px;
+    left: 900px;
+    border-radius: 20px;
+}
+
+.data {
+    margin-top: 100px;
+    background-color: #333333;
+    position: absolute;
+    top: 150px;
+    left: 900px;
+    border-radius: 20px;
+}
+
+.form-data {
+    margin-right: 225px;
+    margin-left: 225px;
+    height: 150px;
+    width: 350px;
+}
+
+.payment {
+    margin-top: 100px;
+    background-color: #333333;
+    position: absolute;
+    top: 1400px;
+    left: 900px;
+    border-radius: 20px;
+}
+
+.form-payment {
+    margin-right: 225px;
+    margin-left: 225px;
+    height: 150px;
+    width: 350px;
+}
+
+.ror {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-align: center;
+    font-size: 18px;
+    font-family: sans-serif;
+}
+
+.search {
+    position: absolute;
+    padding-left: 50px;
+    top: 65px;
+}
+.form-search {
+    color: white;
+    background-color: #212121;
+    width: 700px;
+    height: 35px;
+    border-radius: 7px;
+    font-size: 15px;
+    text-align: center;
+}
+
+.item {
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    left: 20px;
+    top: 100px;
+    width: 760px;
+    height: 850px;
+    padding-bottom: 500px;
+    padding-top: 10px;
+}
+
+.item a {
+    color: var(--white);
+}
+
+.produk {
+    width: 170px;
+    height: 110px;
+    margin-bottom: 30px;
+    background-color: #444444;
+    border-radius: 10px;
+}
+
+.rors {
+    position: absolute;
+    top: 70px;
+    left: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+.produk-name {
+    font-size: 14px;
+    font-family: sans-serif;
+    font-weight: bold;
+    text-align: center;
+    justify-content: center;
+}
+
+.produk-harga {
+    margin-top: 5px;
+    font-size: 12px;
+    font-family: sans-serif;
+    text-align: center;
+    justify-content: center;
+}
+
+.ptk img{
+    margin-left: 60px;
+    width: 50px;
+}
+
+.logo-img {
+    left: 170px;
+    top: 200px;
+    position: absolute;
+}
+
+.logo-img img {
+    border-radius: 100px;
+    border: 2px solid white;
+    width: 120px;
+}
+
+@media screen and (max-width: 600px) {
+    nav ul li a {
+        font-size: 12px;
+    }
+    .title {
+        font-size: 13pt;
+    }
+    .input-submit {
+        width: 10%;
+    }
+}
