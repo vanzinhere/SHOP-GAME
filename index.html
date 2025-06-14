@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GeoTag Foto (Client Side)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GeoTag Foto Elegan</title>
   <script src="https://cdn.jsdelivr.net/npm/piexifjs"></script>
   <style>
     * {
@@ -14,81 +14,87 @@
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #2c3e50, #3498db);
+      min-height: 100vh;
+      background: url('https://images.unsplash.com/photo-1531574372434-cc14ecabf80d?auto=format&fit=crop&w=1400&q=80') no-repeat center center/cover;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      backdrop-filter: blur(12px);
     }
 
-    .container {
+    .glass {
       background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       padding: 2rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      max-width: 400px;
       width: 90%;
+      max-width: 420px;
       color: #fff;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
       animation: fadeIn 0.7s ease-out;
     }
 
     h2 {
-      margin-bottom: 1.5rem;
       font-weight: 600;
+      margin-bottom: 1.5rem;
     }
 
     input[type="file"] {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 0.6rem;
-      border-radius: 10px;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
       color: #fff;
+      width: 100%;
+      margin-bottom: 1rem;
       cursor: pointer;
     }
 
     button {
-      margin-top: 1.2rem;
       padding: 10px 20px;
       border: none;
       border-radius: 12px;
-      background: #00c3ff;
+      background: rgba(0, 174, 255, 0.6);
       color: #fff;
-      font-size: 1rem;
       font-weight: bold;
+      font-size: 1rem;
       cursor: pointer;
       transition: background 0.3s ease;
+      margin-bottom: 1rem;
+      width: 100%;
     }
 
     button:hover {
-      background: #00a0cc;
+      background: rgba(0, 150, 230, 0.8);
+    }
+
+    #popup {
+      display: none;
+      padding: 1rem;
+      background: rgba(255,255,255,0.15);
+      border-radius: 15px;
+      margin-top: 1rem;
+      animation: slideUp 0.5s ease forwards;
     }
 
     #downloadLink {
       display: none;
       margin-top: 1.5rem;
       text-decoration: none;
-      background: #2ecc71;
-      padding: 10px 20px;
-      border-radius: 10px;
-      color: #fff;
+      background: rgba(46, 204, 113, 0.7);
+      padding: 12px 18px;
+      border-radius: 12px;
+      color: white;
       font-weight: bold;
       transition: background 0.3s ease;
+      display: inline-block;
     }
 
     #downloadLink:hover {
-      background: #27ae60;
-    }
-
-    #popup {
-      display: none;
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 15px;
-      color: #fff;
-      animation: slideUp 0.5s ease forwards;
+      background: rgba(39, 174, 96, 0.85);
     }
 
     @keyframes fadeIn {
@@ -102,22 +108,26 @@
     }
 
     @media (max-width: 600px) {
-      h2 {
-        font-size: 1.2rem;
+      .glass {
+        padding: 1.5rem;
       }
 
-      input[type="file"], button, #downloadLink {
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      button, input[type="file"], #downloadLink {
         width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>📍 Tambah Lokasi ke Foto</h2>
-    <input type="file" id="file" accept=".jpg, .jpeg"><br>
+  <div class="glass">
+    <h2>📍 Tambah Lokasi GPS ke Foto</h2>
+    <input type="file" id="file" accept=".jpg, .jpeg">
     <button onclick="addLocation()">Tambahkan Lokasi</button>
-    
+
     <div id="popup">
       <p>✅ Lokasi berhasil ditambahkan!</p>
       <p><strong>Semoga keterima di sekolah impian! 🏫</strong></p>
@@ -152,7 +162,7 @@
       }
 
       if (!navigator.geolocation) {
-        alert("Geolocation tidak didukung browser.");
+        alert("Geolocation tidak didukung oleh browser.");
         return;
       }
 
