@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GeoTag Foto (Client Side)</title>
+  <title>GeoTagging Foto</title>
   <script src="https://cdn.jsdelivr.net/npm/piexifjs"></script>
   <style>
     * {
@@ -114,16 +114,15 @@
 </head>
 <body>
   <div class="container">
-    <h2>📍 Tambah Lokasi ke Foto</h2>
+    <h2>Tambah Lokasi ke Foto</h2>
     <input type="file" id="file" accept=".jpg, .jpeg"><br>
     <button onclick="addLocation()">Tambahkan Lokasi</button>
     
     <div id="popup">
-      <p>✅ Lokasi berhasil ditambahkan!</p>
-      <p><strong>Semoga keterima di sekolah impian! 🏫</strong></p>
+      <p>Tag lokasi berhasil ditambahkan kedalam foto!</p>
     </div>
 
-    <a id="downloadLink">⬇️ Unduh Foto (Dengan Lokasi)</a>
+    <a id="downloadLink">Unduh Hasil</a>
   </div>
 
   <script>
