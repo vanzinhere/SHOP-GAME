@@ -1,90 +1,130 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tambah Lokasi ke Foto (Tanpa Server)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GeoTag Foto (Client Side)</title>
   <script src="https://cdn.jsdelivr.net/npm/piexifjs"></script>
   <style>
     * {
       box-sizing: border-box;
-    }
-    body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #83a4d4, #b6fbff);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
+    }
+
+    body {
       margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #2c3e50, #3498db);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      color: #fff;
+      animation: fadeIn 0.7s ease-out;
+    }
+
     h2 {
-      color: #2c3e50;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
     }
+
     input[type="file"] {
-      margin-top: 1rem;
-      padding: 0.5rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      margin-top: 1rem;
-      padding: 10px 20px;
-      font-size: 1rem;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 0.6rem;
+      border-radius: 10px;
+      color: #fff;
       cursor: pointer;
-      transition: background 0.3s;
     }
+
+    button {
+      margin-top: 1.2rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      background: #00c3ff;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
     button:hover {
-      background-color: #2980b9;
+      background: #00a0cc;
     }
+
     #downloadLink {
       display: none;
       margin-top: 1.5rem;
-      padding: 10px 15px;
-      background-color: #2ecc71;
-      color: white;
-      border-radius: 8px;
       text-decoration: none;
-      transition: background 0.3s;
+      background: #2ecc71;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: #fff;
+      font-weight: bold;
+      transition: background 0.3s ease;
     }
+
     #downloadLink:hover {
-      background-color: #27ae60;
+      background: #27ae60;
     }
+
     #popup {
       display: none;
-      margin-top: 2rem;
-      background: white;
-      padding: 1.5rem 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      color: #2c3e50;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      color: #fff;
+      animation: slideUp 0.5s ease forwards;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 600px) {
-      body {
-        padding: 1rem;
+      h2 {
+        font-size: 1.2rem;
       }
-      button, input[type="file"], #downloadLink {
+
+      input[type="file"], button, #downloadLink {
         width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <h2>Tambah Lokasi GPS ke Foto (Client Side)</h2>
-  <input type="file" id="file" accept=".jpg, .jpeg"><br>
-  <button onclick="addLocation()">Tambahkan Lokasi</button>
+  <div class="container">
+    <h2>📍 Tambah Lokasi ke Foto</h2>
+    <input type="file" id="file" accept=".jpg, .jpeg"><br>
+    <button onclick="addLocation()">Tambahkan Lokasi</button>
+    
+    <div id="popup">
+      <p>✅ Lokasi berhasil ditambahkan!</p>
+      <p><strong>Semoga keterima di sekolah impian! 🏫</strong></p>
+    </div>
 
-  <div id="popup">
-    <p><strong>✅ Lokasi berhasil ditambahkan!</strong></p>
-    <p>Semoga keterima di sekolah impian! 🏫✨</p>
+    <a id="downloadLink">⬇️ Unduh Foto (Dengan Lokasi)</a>
   </div>
-
-  <a id="downloadLink">⬇️ Unduh Foto Baru (Dengan Lokasi)</a>
 
   <script>
     let originalImageData;
@@ -112,7 +152,7 @@
       }
 
       if (!navigator.geolocation) {
-        alert("Geolocation tidak didukung oleh browser.");
+        alert("Geolocation tidak didukung browser.");
         return;
       }
 
@@ -133,10 +173,10 @@
         const exifBytes = piexif.dump(exifObj);
         const newData = piexif.insert(exifBytes, originalImageData);
 
-        // Tampilkan popup
+        // Show popup
         document.getElementById("popup").style.display = "block";
 
-        // Tampilkan link unduh
+        // Show download link
         const link = document.getElementById("downloadLink");
         link.href = newData;
         link.download = "foto-lokasi.jpg";
