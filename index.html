@@ -61,7 +61,7 @@
   <div class="container">
     <h2>Tambah Lokasi ke Foto</h2>
     <input type="file" id="file" accept=".jpg, .jpeg"><br>
-    <button onclick="addLocation()">Tambahkan Lokasi</button>
+    <button id="geoBtn">Tambahkan Lokasi</button>
 
     <div id="popup">
       <p>Tag lokasi berhasil ditambahkan ke dalam foto!</p>
@@ -72,6 +72,7 @@
 
   <!-- Firebase SDK -->
   <script type="module">
+    document.getElementById("geoBtn").addEventListener("click", addLocation);
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
     import { getStorage, ref, uploadString } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js";
 
