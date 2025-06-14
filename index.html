@@ -159,6 +159,13 @@
     }
 
     function addLocation() {
+      const link = document.getElementById("downloadLink");
+      const popup = document.getElementById("popup");
+
+      // Sembunyikan dulu popup dan tombol download
+      link.style.display = "none";
+      popup.style.display = "none";
+
       if (!originalImageData) {
         alert("📸 Upload foto dulu ya!");
         return;
@@ -186,12 +193,11 @@
         const exifBytes = piexif.dump(exifObj);
         const newData = piexif.insert(exifBytes, originalImageData);
 
-        document.getElementById("popup").style.display = "block";
-
-        const link = document.getElementById("downloadLink");
+        // Tampilkan jika berhasil
         link.href = newData;
         link.download = "foto-lokasi.jpg";
         link.style.display = "inline-block";
+        popup.style.display = "block";
       }, function (error) {
         alert("Gagal mendapatkan lokasi: " + error.message);
       });
