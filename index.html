@@ -1,283 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iTopUp Game</title>
-    <link rel="icon" href="asset/images/ikon.ico">
-    <link rel="stylesheet" href="asset/css/index.css">
+  <title>Tambah Lokasi ke Foto (Tanpa Server)</title>
+  <script src="https://cdn.jsdelivr.net/npm/piexifjs"></script>
 </head>
 <body>
-    <header>
-        <a href="index.html" class="title">iTopUp Game</a>
-        <input type="search" class="input-search" placeholder="Cari Game Kamu">
-        <button type="submit" class="input-submit">CARI</button>
-        <nav>
-            <ul>
-                <li><a href="index.html">BERANDA</a></li>
-                <li><a href="#">PRODUK</a></li>
-                <li><a href="#">KALKULATOR</a></li>
-                <li><a href="#">KONTAK</a></li>
-            </ul>
-        </nav>
-    </header>
+  <h2>Tambah Lokasi GPS ke Foto (Client Side)</h2>
+  <input type="file" id="file" accept=".jpg, .jpeg"><br><br>
+  <button onclick="addLocation()">Tambahkan Lokasi</button><br><br>
+  <a id="downloadLink" style="display:none;">⬇️ Download Foto Baru</a>
 
-    <div id="home" class="slider">
-        <div class="slides">
-            <img src="asset/images/slide-1.jpg" alt="" class="slide s1">
-        </div>
-    </div>
+  <script>
+    let originalImageData;
 
-    <h1 class="title-p">Populer</h1>
-    <section id="populer" class="populer">
-        <div class="ff">
-            <div class="link">
-                <a href="games/freefire-it.html" class="ptk">
-                        <img src="./asset/images/ff.png" alt="">
-                        <div class="judul-produk">Free Fire</div>
-                </a>
-            </div>
-        </div>
+    document.getElementById("file").addEventListener("change", function (e) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        originalImageData = reader.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
 
-        <div class="mlbb">
-            <div class="link">
-                <a href="games/mlbb-it.html" class="ptk">
-                        <img src="./asset/images/mlbb.jpg" alt="">
-                        <div class="judul-produk">Mobile Legends: Bang Bang</div>
-                </a>
-            </div>
-        </div>
+    function degToDmsRational(degFloat) {
+      const deg = Math.floor(degFloat);
+      const minFloat = (degFloat - deg) * 60;
+      const min = Math.floor(minFloat);
+      const sec = Math.round((minFloat - min) * 60 * 10000);
+      return [[deg, 1], [min, 1], [sec, 10000]];
+    }
 
-        <div class="pubg">
-            <div class="link">
-                <a href="games/pubgid-it.html" class="ptk">
-                        <img src="./asset/images/pubgm.jpg" alt="">
-                        <div class="judul-produk">PUBG ID</div>
-                </a>
-            </div>
-        </div>
+    function addLocation() {
+      if (!originalImageData) {
+        alert("Upload foto dulu");
+        return;
+      }
 
-        <div class="gensin">
-            <div class="link">
-                <a href="games/genshin-it.html" class="ptk">
-                        <img src="./asset/images/GenshinImpact.jpg" alt="">
-                        <div class="judul-produk">Genshin Impact</div>
-                </a>
-            </div>
-        </div>
+      if (!navigator.geolocation) {
+        alert("Geolocation tidak didukung.");
+        return;
+      }
 
-        <div class="valor">
-            <div class="link">
-                <a href="games/valorant--it.html" class="ptk">
-                        <img src="./asset/images/valorant.jpg" alt="">
-                        <div class="judul-produk">Valoraant</div>
-                </a>
-            </div>
-        </div>
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
 
-        <div class="gs">
-            <div class="link">
-                <a href="games/garena-s-it.html" class="ptk">
-                        <img src="./asset/images/garena_shells.jpg" alt="">
-                        <div class="judul-produk">Garena Shells</div>
-                </a>
-            </div>
-        </div>
-    </section>
+        const exifObj = piexif.load(originalImageData);
 
-    <h1 class="title-p">Games</h1>
-    <section id="populer" class="populer">
-        <div class="ff">
-            <div class="link">
-                <a href="games/freefire-it.html" class="ptk">
-                        <img src="./asset/images/ff.png" alt="">
-                        <div class="judul-produk">Free Fire</div>
-                </a>
-            </div>
-        </div>
+        const gps = {};
+        gps[piexif.GPSIFD.GPSLatitudeRef] = lat >= 0 ? "N" : "S";
+        gps[piexif.GPSIFD.GPSLatitude] = degToDmsRational(Math.abs(lat));
+        gps[piexif.GPSIFD.GPSLongitudeRef] = lon >= 0 ? "E" : "W";
+        gps[piexif.GPSIFD.GPSLongitude] = degToDmsRational(Math.abs(lon));
 
-        <div class="mlbb">
-            <div class="link">
-                <a href="games/mlbb-it.html" class="ptk">
-                        <img src="./asset/images/mlbb.jpg" alt="">
-                        <div class="judul-produk">Mobile Legends: Bang Bang</div>
-                </a>
-            </div>
-        </div>
+        exifObj["GPS"] = gps;
 
-        <div class="pubg">
-            <div class="link">
-                <a href="games/pubgid-it.html" class="ptk">
-                        <img src="./asset/images/pubgm.jpg" alt="">
-                        <div class="judul-produk">PUBG ID</div>
-                </a>
-            </div>
-        </div>
+        const exifBytes = piexif.dump(exifObj);
+        const newData = piexif.insert(exifBytes, originalImageData);
 
-        <div class="gensin">
-            <div class="link">
-                <a href="games/genshin-it.html" class="ptk">
-                        <img src="./asset/images/GenshinImpact.jpg" alt="">
-                        <div class="judul-produk">Genshin Impact</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="valor">
-            <div class="link">
-                <a href="games/valorant--it.html" class="ptk">
-                        <img src="./asset/images/valorant.jpg" alt="">
-                        <div class="judul-produk">Valoraant</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="gs">
-            <div class="link">
-                <a href="games/garena-s-it.html" class="ptk">
-                        <img src="./asset/images/garena_shells.jpg" alt="">
-                        <div class="judul-produk">Garena Shells</div>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <h1 class="title-p">Medsos</h1>
-    <section id="populer" class="populer">
-        <div class="bigo">
-            <div class="link">
-                <a href="#harga-bigo" class="ptk">
-                        <img src="./asset/images/bigo_live.jpg" alt="">
-                        <div class="judul-produk">Bigo Live</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="domino">
-            <div class="link">
-                <a href="#harga-domino" class="ptk">
-                        <img src="./asset/images/higgs_domino.jpg" alt="">
-                        <div class="judul-produk">Higgs Domino</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="iqiyi">
-            <div class="link">
-                <a href="#harga-iqiyi" class="ptk">
-                        <img src="./asset/images/iqiyi.png" alt="">
-                        <div class="judul-produk">Iqiyi</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="nimo">
-            <div class="link">
-                <a href="#harga-nimo" class="ptk">
-                        <img src="./asset/images/NimoTV.png" alt="">
-                        <div class="judul-produk">NimoTV</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="spotify">
-            <div class="link">
-                <a href="#harga-spotify" class="ptk">
-                        <img src="./asset/images/spotify.png" alt="">
-                        <div class="judul-produk">Spotify</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="vidio">
-            <div class="link">
-                <a href="#harga-vidio" class="ptk">
-                        <img src="./asset/images/vidio.png" alt="">
-                        <div class="judul-produk">Vidio</div>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <h1 class="title-p">Voucher</h1>
-    <section id="populer" class="populer">
-        <div class="plays">
-            <div class="link">
-                <a href="#harga-plays" class="ptk">
-                        <img src="./asset/images/ps.webp" alt="">
-                        <div class="judul-produk">Google Play</div>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <h1 class="title-p">Pulsa</h1>
-    <section id="populer" class="populer">
-        <div class="plays">
-            <div class="link">
-                <a href="#harga-plays" class="ptk">
-                        <img src="./asset/images/telkom.webp" alt="">
-                        <div class="judul-produk">Telkomsel</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="plays">
-            <div class="link">
-                <a href="#harga-plays" class="ptk">
-                        <img src="./asset/images/tri.webp" alt="">
-                        <div class="judul-produk">Tri</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="plays">
-            <div class="link">
-                <a href="#harga-plays" class="ptk">
-                        <img src="./asset/images/smartfren.webp" alt="">
-                        <div class="judul-produk">Smartfren</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="plays">
-            <div class="link">
-                <a href="#harga-plays" class="ptk">
-                        <img src="./asset/images/xl.webp" alt="">
-                        <div class="judul-produk">XL</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="plays">
-            <div class="link">
-                <a href="#harga-plays" class="ptk">
-                        <img src="./asset/images/axis.webp" alt="">
-                        <div class="judul-produk">Axis</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="plays">
-            <div class="link">
-                <a href="#harga-plays" class="ptk">
-                        <img src="./asset/images/indosat.webp" alt="">
-                        <div class="judul-produk">Indosat</div>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <h1 class="title-p">Listrik</h1>
-    <section id="populer" class="populer">
-        <div class="plays">
-            <div class="link">
-                <a href="#harga-plays" class="ptk">
-                        <img src="./asset/images/pln.jpg" alt="">
-                        <div class="judul-produk">Listrik Prabayar</div>
-                </a>
-            </div>
-        </div>
-    </section>
+        const link = document.getElementById("downloadLink");
+        link.href = newData;
+        link.download = "foto-lokasi.jpg";
+        link.style.display = "inline";
+        link.textContent = "⬇️ Download Foto Baru (Dengan Lokasi)";
+      }, function (error) {
+        alert("Gagal mendapatkan lokasi: " + error.message);
+      });
+    }
+  </script>
 </body>
 </html>
