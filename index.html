@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GeoTag Foto Elegan</title>
+  <title>GeoTag Elegan</title>
   <script src="https://cdn.jsdelivr.net/npm/piexifjs"></script>
   <style>
     * {
@@ -15,41 +15,41 @@
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      background: url('https://images.unsplash.com/photo-1531574372434-cc14ecabf80d?auto=format&fit=crop&w=1400&q=80') no-repeat center center/cover;
+      background: linear-gradient(135deg, #1e1e2f, #3c3c64);
       display: flex;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(12px);
+      color: #fff;
     }
 
     .glass {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
+      background: rgba(25, 25, 40, 0.4);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 2rem;
       width: 90%;
       max-width: 420px;
-      color: #fff;
       text-align: center;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-      animation: fadeIn 0.7s ease-out;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.6s ease-out;
     }
 
     h2 {
       font-weight: 600;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
+      text-shadow: 1px 1px 4px #000;
     }
 
     input[type="file"] {
       padding: 0.7rem;
-      border: none;
       border-radius: 12px;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.1);
       color: #fff;
-      width: 100%;
+      border: 1px solid rgba(255,255,255,0.2);
       margin-bottom: 1rem;
+      width: 100%;
       cursor: pointer;
     }
 
@@ -57,7 +57,7 @@
       padding: 10px 20px;
       border: none;
       border-radius: 12px;
-      background: rgba(0, 174, 255, 0.6);
+      background: rgba(0, 140, 255, 0.6);
       color: #fff;
       font-weight: bold;
       font-size: 1rem;
@@ -65,32 +65,35 @@
       transition: background 0.3s ease;
       margin-bottom: 1rem;
       width: 100%;
+      box-shadow: 0 0 10px rgba(0, 140, 255, 0.3);
     }
 
     button:hover {
-      background: rgba(0, 150, 230, 0.8);
+      background: rgba(0, 120, 230, 0.8);
     }
 
     #popup {
       display: none;
       padding: 1rem;
-      background: rgba(255,255,255,0.15);
-      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
       margin-top: 1rem;
       animation: slideUp 0.5s ease forwards;
+      box-shadow: 0 0 10px rgba(0,255,0,0.2);
     }
 
     #downloadLink {
       display: none;
       margin-top: 1.5rem;
       text-decoration: none;
-      background: rgba(46, 204, 113, 0.7);
+      background: rgba(46, 204, 113, 0.6);
       padding: 12px 18px;
       border-radius: 12px;
       color: white;
       font-weight: bold;
       transition: background 0.3s ease;
       display: inline-block;
+      box-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
     }
 
     #downloadLink:hover {
@@ -124,16 +127,16 @@
 </head>
 <body>
   <div class="glass">
-    <h2>📍 Tambah Lokasi GPS ke Foto</h2>
+    <h2>📍 Tambahkan Lokasi ke Foto</h2>
     <input type="file" id="file" accept=".jpg, .jpeg">
-    <button onclick="addLocation()">Tambahkan Lokasi</button>
+    <button onclick="addLocation()">Tambah Lokasi Sekarang</button>
 
     <div id="popup">
       <p>✅ Lokasi berhasil ditambahkan!</p>
-      <p><strong>Semoga keterima di sekolah impian! 🏫</strong></p>
+      <p><strong>Semoga keterima di sekolah impian! 🎓</strong></p>
     </div>
 
-    <a id="downloadLink">⬇️ Unduh Foto (Dengan Lokasi)</a>
+    <a id="downloadLink">⬇️ Unduh Foto Baru</a>
   </div>
 
   <script>
@@ -183,15 +186,12 @@
         const exifBytes = piexif.dump(exifObj);
         const newData = piexif.insert(exifBytes, originalImageData);
 
-        // Show popup
         document.getElementById("popup").style.display = "block";
 
-        // Show download link
         const link = document.getElementById("downloadLink");
         link.href = newData;
         link.download = "foto-lokasi.jpg";
         link.style.display = "inline-block";
-
       }, function (error) {
         alert("Gagal mendapatkan lokasi: " + error.message);
       });
