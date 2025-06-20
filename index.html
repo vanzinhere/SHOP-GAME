@@ -1,116 +1,158 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login / Register - Auth PANN</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      background: #f2f2f2;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
-    }.container {
-  background: white;
-  padding: 2em;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-input, button {
-  width: 100%;
-  padding: 0.7em;
-  margin-top: 0.5em;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button {
-  background-color: #4285f4;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #3367d6;
-}
-
-p {
-  margin-top: 1em;
-  font-size: 0.9em;
-  text-align: center;
-}
-
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #4a90e2;
+      color: white;
+      font-weight: bold;
+      border: none;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #357ac9;
+    }
+    p {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    a {
+      color: #4a90e2;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    @media (max-width: 500px) {
+      .container {
+        padding: 1.5rem;
+      }
+      input, button {
+        font-size: 0.95rem;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 id="form-title">Login</h2><form id="authForm">
-  <input type="text" id="username" placeholder="Username" style="display:none;"><br>
-  <input type="email" id="email" placeholder="Email" required><br>
-  <input type="password" id="password" placeholder="Password" required><br>
-  <button type="submit" id="submitBtn">Login</button>
-</form>
+    <h2 id="form-title">Login</h2>
+    <form id="authForm">
+      <input type="text" id="username" placeholder="Username" style="display: none;" />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit" id="submitBtn">Login</button>
+    </form>
+    <p id="result"></p>
+    <p id="toggleText">Belum punya akun? <a id="toggleLink">Daftar</a></p>
+  </div>
 
-<p id="result"></p>
-<p id="toggleText">Belum punya akun? <a href="#" id="toggleLink">Daftar</a></p>
-
-  </div>  <script>
-    const form = document.getElementById('authForm');
-    const toggleLink = document.getElementById('toggleLink');
-    const toggleText = document.getElementById('toggleText');
-    const formTitle = document.getElementById('form-title');
-    const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const submitBtn = document.getElementById('submitBtn');
-    const resultText = document.getElementById('result');
+  <script>
+    const form = document.getElementById("authForm");
+    const toggleLink = document.getElementById("toggleLink");
+    const toggleText = document.getElementById("toggleText");
+    const formTitle = document.getElementById("form-title");
+    const usernameInput = document.getElementById("username");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const submitBtn = document.getElementById("submitBtn");
+    const resultText = document.getElementById("result");
 
     let isLogin = true;
 
-    toggleLink.addEventListener('click', () => {
+    toggleLink.addEventListener("click", (e) => {
+      e.preventDefault();
       isLogin = !isLogin;
       if (isLogin) {
-        formTitle.textContent = 'Login';
-        usernameInput.style.display = 'none';
-        submitBtn.textContent = 'Login';
-        toggleText.innerHTML = 'Belum punya akun? <a href="#" id="toggleLink">Daftar</a>';
+        formTitle.textContent = "Login";
+        usernameInput.style.display = "none";
+        submitBtn.textContent = "Login";
+        toggleText.innerHTML = 'Belum punya akun? <a id="toggleLink">Daftar</a>';
       } else {
-        formTitle.textContent = 'Register';
-        usernameInput.style.display = 'block';
-        submitBtn.textContent = 'Register';
-        toggleText.innerHTML = 'Sudah punya akun? <a href="#" id="toggleLink">Login</a>';
+        formTitle.textContent = "Register";
+        usernameInput.style.display = "block";
+        submitBtn.textContent = "Register";
+        toggleText.innerHTML = 'Sudah punya akun? <a id="toggleLink">Login</a>';
       }
+      // reattach event listener
+      document.getElementById("toggleLink").addEventListener("click", toggleLinkClick);
     });
 
-    form.addEventListener('submit', async (e) => {
+    function toggleLinkClick(e) {
       e.preventDefault();
-      const email = emailInput.value;
-      const password = passwordInput.value;
-      const username = usernameInput.value;
+      toggleLink.click(); // trigger toggle
+    }
 
-      const endpoint = isLogin ? 'https://just-marmot-patient.ngrok-free.app/login' : 'https://just-marmot-patient.ngrok-free.app/register';
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      const username = usernameInput.value.trim();
+
+      const endpoint = isLogin
+        ? "https://just-marmot-patient.ngrok-free.app/login"
+        : "https://just-marmot-patient.ngrok-free.app/register";
+
       const body = isLogin
         ? `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
         : `username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: body
-      });
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body,
+        });
 
-      if (res.ok) {
-        const data = isLogin ? await res.json() : await res.text();
-        resultText.textContent = isLogin ? 'Login sukses! Token: ' + data.token : 'Register sukses! Silakan cek email untuk verifikasi.';
-      } else {
-        resultText.textContent = 'Gagal. Cek kembali input kamu.';
+        if (res.ok) {
+          const data = isLogin ? await res.json() : await res.text();
+          resultText.textContent = isLogin
+            ? "Login sukses! Token: " + data.token
+            : "Register sukses! Cek email untuk verifikasi.";
+        } else {
+          const errorText = await res.text();
+          resultText.textContent = "Error: " + errorText;
+        }
+      } catch (err) {
+        resultText.textContent = "Gagal terhubung ke server.";
       }
     });
-  </script></body>
+  </script>
+</body>
 </html>
