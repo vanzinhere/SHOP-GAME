@@ -107,7 +107,7 @@ p {
 
       if (res.ok) {
         const data = isLogin ? await res.json() : await res.text();
-        resultText.textContent = isLogin ? 'Login sukses! Token: ' + data.token : 'Register sukses! Silakan login.';
+        resultText.textContent = isLogin ? 'Login sukses! Token: ' + data.token : 'Register sukses! Silakan cek email untuk verifikasi.';
       } else {
         resultText.textContent = 'Gagal. Cek kembali input kamu.';
       }
