@@ -1,62 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login / Register - Auth PANN</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth PANN</title>
   <style>
     * {
       box-sizing: border-box;
     }
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f0f2f5;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
     }
     .container {
       background: white;
       padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       width: 100%;
       max-width: 400px;
     }
     h2 {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      color: #1976d2;
     }
     input, button {
       width: 100%;
-      padding: 0.8rem;
-      margin-top: 0.5rem;
-      border-radius: 5px;
+      padding: 0.9rem;
+      margin-top: 0.6rem;
+      border-radius: 6px;
       border: 1px solid #ccc;
       font-size: 1rem;
     }
     button {
-      background-color: #4a90e2;
+      background-color: #1976d2;
       color: white;
       font-weight: bold;
       border: none;
-      transition: background 0.3s ease;
+      transition: 0.3s;
     }
     button:hover {
-      background-color: #357ac9;
+      background-color: #1565c0;
     }
-    p {
+    p, a {
       text-align: center;
       margin-top: 1rem;
       font-size: 0.9rem;
+      display: block;
     }
     a {
-      color: #4a90e2;
-      cursor: pointer;
+      color: #1976d2;
       text-decoration: none;
+    }
+    .hidden {
+      display: none;
     }
     @media (max-width: 500px) {
       .container {
@@ -69,90 +71,152 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2 id="form-title">Login</h2>
-    <form id="authForm">
-      <input type="text" id="username" placeholder="Username" style="display: none;" />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button type="submit" id="submitBtn">Login</button>
-    </form>
-    <p id="result"></p>
-    <p id="toggleText">Belum punya akun? <a id="toggleLink">Daftar</a></p>
-  </div>
+<div class="container" id="auth-container">
+  <h2 id="form-title">Login</h2>
+  <form id="authForm">
+    <input type="text" id="username" placeholder="Username" class="hidden" />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button type="submit" id="submitBtn">Login</button>
+  </form>
+  <p id="result"></p>
+  <p id="toggleText">Belum punya akun? <a id="toggleLink">Daftar</a></p>
+  <a href="#" id="forgotLink">Lupa password?</a>
+</div><div class="container hidden" id="home-container">
+  <h2>Halo, <span id="user-name"></span>!</h2>
+  <p>Email: <span id="user-email"></span></p>
+  <button id="logoutBtn">Logout</button>
+</div><div class="container hidden" id="reset-container">
+  <h2>Reset Password</h2>
+  <form id="resetForm">
+    <input type="email" id="resetEmail" placeholder="Email" required />
+    <button type="submit">Kirim Link Reset</button>
+  </form>
+  <p id="resetResult"></p>
+  <a href="#" id="backToLogin">Kembali ke Login</a>
+</div><script>
+const state = {
+  isLogin: true
+};
 
-  <script>
-    const form = document.getElementById("authForm");
-    const toggleLink = document.getElementById("toggleLink");
-    const toggleText = document.getElementById("toggleText");
-    const formTitle = document.getElementById("form-title");
-    const usernameInput = document.getElementById("username");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const submitBtn = document.getElementById("submitBtn");
-    const resultText = document.getElementById("result");
+const authContainer = document.getElementById("auth-container");
+const homeContainer = document.getElementById("home-container");
+const resetContainer = document.getElementById("reset-container");
+const form = document.getElementById("authForm");
+const toggleLink = document.getElementById("toggleLink");
+const formTitle = document.getElementById("form-title");
+const usernameInput = document.getElementById("username");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const submitBtn = document.getElementById("submitBtn");
+const resultText = document.getElementById("result");
+const forgotLink = document.getElementById("forgotLink");
+const logoutBtn = document.getElementById("logoutBtn");
+const userName = document.getElementById("user-name");
+const userEmail = document.getElementById("user-email");
+const resetForm = document.getElementById("resetForm");
+const resetEmail = document.getElementById("resetEmail");
+const resetResult = document.getElementById("resetResult");
+const backToLogin = document.getElementById("backToLogin");
 
-    let isLogin = true;
+const API_BASE = "https://just-marmot-patient.ngrok-free.app";
 
-    toggleLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      isLogin = !isLogin;
-      if (isLogin) {
-        formTitle.textContent = "Login";
-        usernameInput.style.display = "none";
-        submitBtn.textContent = "Login";
-        toggleText.innerHTML = 'Belum punya akun? <a id="toggleLink">Daftar</a>';
-      } else {
-        formTitle.textContent = "Register";
-        usernameInput.style.display = "block";
-        submitBtn.textContent = "Register";
-        toggleText.innerHTML = 'Sudah punya akun? <a id="toggleLink">Login</a>';
-      }
-      // reattach event listener
-      document.getElementById("toggleLink").addEventListener("click", toggleLinkClick);
+function toggleAuthForm() {
+  state.isLogin = !state.isLogin;
+  formTitle.textContent = state.isLogin ? "Login" : "Register";
+  usernameInput.classList.toggle("hidden", state.isLogin);
+  submitBtn.textContent = state.isLogin ? "Login" : "Register";
+  toggleLink.innerHTML = state.isLogin
+    ? "Belum punya akun? <a id='toggleLink'>Daftar</a>"
+    : "Sudah punya akun? <a id='toggleLink'>Login</a>";
+}
+
+function showHome(token, user) {
+  localStorage.setItem("token", token);
+  userName.textContent = user.username;
+  userEmail.textContent = user.email;
+  authContainer.classList.add("hidden");
+  homeContainer.classList.remove("hidden");
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  location.reload();
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  const username = usernameInput.value.trim();
+
+  const endpoint = state.isLogin ? "/login" : "/register";
+  const body = state.isLogin
+    ? `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+    : `username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+
+  try {
+    const res = await fetch(API_BASE + endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body
     });
-
-    function toggleLinkClick(e) {
-      e.preventDefault();
-      toggleLink.click(); // trigger toggle
+    const data = await res.json();
+    if (res.ok && state.isLogin) {
+      showHome(data.token, data.user);
+    } else if (!state.isLogin && res.ok) {
+      resultText.textContent = "Registrasi berhasil! Cek email untuk verifikasi.";
+    } else {
+      resultText.textContent = data.message || "Login gagal.";
     }
+  } catch {
+    resultText.textContent = "Gagal terhubung ke server.";
+  }
+});
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-      const username = usernameInput.value.trim();
+toggleLink.addEventListener("click", (e) => {
+  e.preventDefault();
+  toggleAuthForm();
+});
 
-      const endpoint = isLogin
-        ? "https://just-marmot-patient.ngrok-free.app/login"
-        : "https://just-marmot-patient.ngrok-free.app/register";
+forgotLink.addEventListener("click", () => {
+  authContainer.classList.add("hidden");
+  resetContainer.classList.remove("hidden");
+});
 
-      const body = isLogin
-        ? `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-        : `username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+backToLogin.addEventListener("click", () => {
+  resetContainer.classList.add("hidden");
+  authContainer.classList.remove("hidden");
+});
 
-      try {
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body,
-        });
-
-        if (res.ok) {
-          const data = isLogin ? await res.json() : await res.text();
-          resultText.textContent = isLogin
-            ? "Login sukses! Token: " + data.token
-            : "Register sukses! Cek email untuk verifikasi.";
-        } else {
-          const errorText = await res.text();
-          resultText.textContent = "Error: " + errorText;
-        }
-      } catch (err) {
-        resultText.textContent = "Gagal terhubung ke server.";
-      }
+resetForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch(API_BASE + "/reset_password_request", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `email=${encodeURIComponent(resetEmail.value)}`
     });
-  </script>
-</body>
+    resetResult.textContent = await res.text();
+  } catch {
+    resetResult.textContent = "Gagal mengirim permintaan.";
+  }
+});
+
+logoutBtn.addEventListener("click", logout);
+
+(async function autoLogin() {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+  try {
+    const res = await fetch(API_BASE + "/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const user = await res.json();
+      showHome(token, user);
+    }
+  } catch {}
+})();
+</script></body>
 </html>
