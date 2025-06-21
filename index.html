@@ -214,10 +214,15 @@ logoutBtn.addEventListener("click", logout);
     });
     if (res.ok) {
       const user = await res.json();
-      showHome(token, user);
+      showHome(token, user);  // ⬅️ pastikan user ditampilkan di sini
+    } else {
+      console.log("Token invalid atau expired");
     }
-  } catch {}
+  } catch (err) {
+    console.error("Gagal konek ke /me:", err);
+  }
 })();
+
 
 </script></body>
 </html>
