@@ -208,25 +208,25 @@ logoutBtn.addEventListener("click", logout);
 (async function autoLogin() {
   const token = localStorage.getItem("token");
   if (!token) return;
+
   try {
     const res = await fetch(API_BASE + "/me", {
       headers: { Authorization: `Bearer ${token}` }
     });
-    if (res.ok) {
-      try {
-        const user = await res.json();
-        showHome(token, user);
-      } catch (err) {
-        console.error("Respon bukan JSON valid:", err);
-      }
-      showHome(token, user);  // ⬅️ pastikan user ditampilkan di sini
+
+    const contentType = res.headers.get("content-type") || "";
+    if (res.ok && contentType.includes("application/json")) {
+      const user = await res.json();
+      showHome(token, user);
     } else {
-      console.log("Token invalid atau expired");
+      console.warn("Token tidak valid atau respon bukan JSON. Auto-login dibatalkan.");
+      localStorage.removeItem("token");
     }
   } catch (err) {
     console.error("Gagal konek ke /me:", err);
   }
 })();
+
 
 
 </script></body>
