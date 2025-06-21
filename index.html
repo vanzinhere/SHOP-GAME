@@ -213,7 +213,12 @@ logoutBtn.addEventListener("click", logout);
       headers: { Authorization: `Bearer ${token}` }
     });
     if (res.ok) {
-      const user = await res.json();
+      try {
+        const user = await res.json();
+        showHome(token, user);
+      } catch (err) {
+        console.error("Respon bukan JSON valid:", err);
+      }
       showHome(token, user);  // ⬅️ pastikan user ditampilkan di sini
     } else {
       console.log("Token invalid atau expired");
