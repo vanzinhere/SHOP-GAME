@@ -1,233 +1,223 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auth PANN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>bikin nametag smkn4 kab tngrng</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet"/>
   <style>
     * {
       box-sizing: border-box;
     }
+
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .nametag {
+      max-width: 100%;
+      width: 400px;
+      margin: auto;
+      border: 2px solid #000;
+      background-color: white;
+      aspect-ratio: 4/3;
+    }
+
+    .header {
+      border-bottom: 2px solid #000;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: row;
+      padding: 20px;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    .photo-box {
+      flex-shrink: 0;
+      width: 20%;
+      aspect-ratio: 2/3;
+      background-color: #ccc;
+      margin-right: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
-    .container {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+
+    .photo-box img {
       width: 100%;
-      max-width: 400px;
+      height: 100%;
+      object-fit: cover;
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: #1976d2;
+
+    .info {
+      text-align: left;
+      font-size: 0.9em;
     }
-    input, button {
-      width: 100%;
-      padding: 0.9rem;
-      margin-top: 0.6rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
+
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
     }
+
+    input[type="text"], input[type="color"], input[type="file"] {
+      padding: 5px;
+      font-size: 1em;
+    }
+
     button {
-      background-color: #1976d2;
-      color: white;
-      font-weight: bold;
-      border: none;
-      transition: 0.3s;
+      padding: 7px 14px;
+      font-size: 1em;
+      cursor: pointer;
     }
-    button:hover {
-      background-color: #1565c0;
-    }
-    p, a {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      display: block;
-    }
-    a {
-      color: #1976d2;
-      text-decoration: none;
-    }
-    .hidden {
+
+    #cropModal {
       display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
     }
-    @media (max-width: 500px) {
-      .container {
-        padding: 1.5rem;
+
+    #cropContainer {
+      background: white;
+      padding: 20px;
+      max-width: 90vw;
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        flex-direction: column;
+        align-items: center;
       }
-      input, button {
-        font-size: 0.95rem;
+
+      .photo-box {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 40%;
+      }
+
+      .info {
+        text-align: center;
       }
     }
   </style>
 </head>
 <body>
-<div class="container" id="auth-container">
-  <h2 id="form-title">Login</h2>
-  <form id="authForm">
-    <input type="text" id="username" placeholder="Username" class="hidden" />
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button type="submit" id="submitBtn">Login</button>
-  </form>
-  <p id="result"></p>
-  <p id="toggleText">Belum punya akun? <a id="toggleLink">Daftar</a></p>
-  <a href="#" id="forgotLink">Lupa password?</a>
-</div><div class="container hidden" id="home-container">
-  <h2>Halo, <span id="user-name"></span>!</h2>
-  <p>Email: <span id="user-email"></span></p>
-  <button id="logoutBtn">Logout</button>
-</div><div class="container hidden" id="reset-container">
-  <h2>Reset Password</h2>
-  <form id="resetForm">
-    <input type="email" id="resetEmail" placeholder="Email" required />
-    <button type="submit">Kirim Link Reset</button>
-  </form>
-  <p id="resetResult"></p>
-  <a href="#" id="backToLogin">Kembali ke Login</a>
-</div><script>
-const state = {
-  isLogin: true
-};
 
-const authContainer = document.getElementById("auth-container");
-const homeContainer = document.getElementById("home-container");
-const resetContainer = document.getElementById("reset-container");
-const form = document.getElementById("authForm");
-const toggleLink = document.getElementById("toggleLink");
-const formTitle = document.getElementById("form-title");
-const usernameInput = document.getElementById("username");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const submitBtn = document.getElementById("submitBtn");
-const resultText = document.getElementById("result");
-const forgotLink = document.getElementById("forgotLink");
-const logoutBtn = document.getElementById("logoutBtn");
-const userName = document.getElementById("user-name");
-const userEmail = document.getElementById("user-email");
-const resetForm = document.getElementById("resetForm");
-const resetEmail = document.getElementById("resetEmail");
-const resetResult = document.getElementById("resetResult");
-const backToLogin = document.getElementById("backToLogin");
+  <h2>buat bikin nametag cuyy</h2>
 
-const API_BASE = "https://just-marmot-patient.ngrok-free.app";
+  <div class="controls">
+    <input type="text" id="nama" placeholder="Nama">
+    <input type="text" id="gugus" placeholder="Gugus">
+    <input type="text" id="asal" placeholder="Asal Sekolah">
+    <input type="color" id="warna" value="#ffffff">
+    <input type="file" id="foto" accept="image/*">
+    <button onclick="generate()">Terapkan</button>
+    <button onclick="downloadNametag()">Download PNG</button>
+  </div>
 
-function toggleAuthForm() {
-  state.isLogin = !state.isLogin;
-  formTitle.textContent = state.isLogin ? "Login" : "Register";
-  usernameInput.classList.toggle("hidden", state.isLogin);
-  submitBtn.textContent = state.isLogin ? "Login" : "Register";
-  toggleLink.innerHTML = state.isLogin
-    ? "Belum punya akun? <a id='toggleLink'>Daftar</a>"
-    : "Sudah punya akun? <a id='toggleLink'>Login</a>";
-}
+  <br><br>
 
-function showHome(token, user) {
-  localStorage.setItem("token", token);
-  userName.textContent = user.username;
-  userEmail.textContent = user.email;
-  authContainer.classList.add("hidden");
-  homeContainer.classList.remove("hidden");
-}
+  <div class="nametag" id="nametag">
+    <div class="header">
+      MASA PENGENALAN LINGKUNGAN SEKOLAH<br>
+      SMKN 4 KABUPATEN TANGERANG TAHUN AJARAN 2025/2026
+    </div>
+    <div class="content">
+      <div class="photo-box" id="fotoBox">
+        <span>2 x 3</span>
+      </div>
+      <div class="info">
+        <p>Nama : <span id="tNama">-</span></p>
+        <p>Gugus : <span id="tGugus">-</span></p>
+        <p>Asal Sekolah : <span id="tAsal">-</span></p>
+      </div>
+    </div>
+  </div>
 
-function logout() {
-  localStorage.removeItem("token");
-  location.reload();
-}
+  <!-- Modal Crop -->
+  <div id="cropModal">
+    <div id="cropContainer">
+      <p>Atur posisi dan ukuran foto:</p>
+      <img id="cropImage" style="max-width:100%;">
+      <br><br>
+      <button onclick="applyCrop()">Gunakan</button>
+      <button onclick="closeCrop()">Batal</button>
+    </div>
+  </div>
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-  const username = usernameInput.value.trim();
+  <canvas id="canvas" style="display:none;"></canvas>
 
-  const endpoint = state.isLogin ? "/login" : "/register";
-  const body = state.isLogin
-    ? `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-    : `username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    let cropper;
 
-  try {
-    const res = await fetch(API_BASE + endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body
+    document.getElementById('foto').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const img = document.getElementById('cropImage');
+        img.src = URL.createObjectURL(file);
+        document.getElementById('cropModal').style.display = 'flex';
+
+        setTimeout(() => {
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(img, {
+            aspectRatio: 2 / 3
+          });
+        }, 100);
+      }
     });
-    const data = await res.json();
-    if (res.ok && state.isLogin) {
-      showHome(data.token, data.user);
-    } else if (!state.isLogin && res.ok) {
-      resultText.textContent = "Registrasi berhasil! Cek email untuk verifikasi.";
-    } else {
-      resultText.textContent = data.message || "Login gagal.";
+
+    function applyCrop() {
+      const canvas = cropper.getCroppedCanvas();
+      const fotoBox = document.getElementById('fotoBox');
+      fotoBox.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = canvas.toDataURL();
+      fotoBox.appendChild(img);
+      closeCrop();
     }
-  } catch {
-    resultText.textContent = "Gagal terhubung ke server.";
-  }
-});
 
-toggleLink.addEventListener("click", (e) => {
-  e.preventDefault();
-  toggleAuthForm();
-});
-
-forgotLink.addEventListener("click", () => {
-  authContainer.classList.add("hidden");
-  resetContainer.classList.remove("hidden");
-});
-
-backToLogin.addEventListener("click", () => {
-  resetContainer.classList.add("hidden");
-  authContainer.classList.remove("hidden");
-});
-
-resetForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch(API_BASE + "/reset_password_request", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `email=${encodeURIComponent(resetEmail.value)}`
-    });
-    resetResult.textContent = await res.text();
-  } catch {
-    resetResult.textContent = "Gagal mengirim permintaan.";
-  }
-});
-
-logoutBtn.addEventListener("click", logout);
-
-(async function autoLogin() {
-  const token = localStorage.getItem("token");
-  if (!token) return;
-
-  try {
-    const res = await fetch(API_BASE + "/me", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    const contentType = res.headers.get("content-type") || "";
-    if (res.ok && contentType.includes("application/json")) {
-      const user = await res.json();
-      showHome(token, user);
-    } else {
-      console.warn("Token tidak valid atau respon bukan JSON. Auto-login dibatalkan.");
-      localStorage.removeItem("token");
+    function closeCrop() {
+      document.getElementById('cropModal').style.display = 'none';
     }
-  } catch (err) {
-    console.error("Gagal konek ke /me:", err);
-  }
-})();
 
+    function generate() {
+      document.getElementById('tNama').innerText = document.getElementById('nama').value;
+      document.getElementById('tGugus').innerText = document.getElementById('gugus').value;
+      document.getElementById('tAsal').innerText = document.getElementById('asal').value;
 
+      let warna = document.getElementById('warna').value;
+      document.getElementById('nametag').style.backgroundColor = warna;
+    }
 
-</script></body>
+    function downloadNametag() {
+      const nametag = document.getElementById("nametag");
+      html2canvas(nametag, {scale: 3}).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "nametag.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+  </script>
+
+</body>
 </html>
